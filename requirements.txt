@@ -1,0 +1,8 @@
+pandas
+numpy
+matplotlib
+openpyxl
+torch
+shapely
+pyvisgraph
+scikit-learn

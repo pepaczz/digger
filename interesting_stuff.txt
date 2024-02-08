@@ -1,0 +1,30 @@
+
+#####################################
+libraries
+---------
+
+https://github.com/tsaoyu/PyVisiLibity
+https://pypi.org/project/shapely/
+
+
+https://deeplearning.lipingyang.org/computational-geometry-in-python/
+(nic moc) https://www.toptal.com/python/computational-geometry-in-python-from-theory-to-implementation
+(nic moc) https://medium.com/@mathcube7/computational-geometry-in-python-6b91d5cf6feb
+https://docs.sympy.org/latest/modules/plotting.html#plot-geom
+https://www.odbms.org/2018/04/interactive-computational-geometry-in-python/
+
+shortest path
+-------------
+https://github.com/satwik-m/Finding-Shortest-Path-Avoiding-Obstacles
+https://discourse.mcneel.com/t/shortest-path-taking-obstacles-and-the-terrain-into-account/141786/6
+
+
+other
+-----
+https://towardsdatascience.com/solving-a-leetcode-problem-using-reinforcement-learning-a-practical-introduction-to-6ec9959dd309
+
+TO LOOK DOWN:
+-------------
+https://docs.sympy.org/latest/tutorials/intro-tutorial/index.html#intro-tutorial
+https://www.youtube.com/watch?v=cXWx6mbej-U
+https://www.youtube.com/c/JordanHarrod

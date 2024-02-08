@@ -1,0 +1,108 @@
+CURRENT TASK:
+
+- discrepancy between step() in rl_trader and digger
+- e.g. in fit_scaler we need to solve how to limit data collection even when play_round is not called
+- we cannot simply pass (self.get_state(), reward, done, info) to play_round due to multiple fighters and actions
+- we might just set number of iterations (e.g. in constants) during scaler data collection
+- also we pass the same data to the buffer as suggested in the comment from LazyProgrammer
+
+####################
+reset round
+    set current player
+    set next player
+
+while not end_of_round:
+
+    state = get_state()
+
+    # get candidate action among all actions of all fighters
+    active_fighter_id = 0  # placeholder
+    active_fighter = fighters[active_fighter_id]  # placeholder
+    act_values = predict(model, state)
+    winning_action = np.argmax(act_values[0])
+
+    perform winning action
+        perform action  <- step() / or already written perform_move_action()
+        log the action <- part of perform_move_action()
+        update remaining_actions
+
+    actions_by_players = remainning_actions.groupby('player_id')  # <- add to remaing_actions
+    if sum(actions_by_players['remaining_actions']) == 0:
+        end_of_round = True
+    else:
+        while not candidate_found:
+            next_candidate_player = next(self.players_cycle)
+            if actions_by_players[next_candidate_player]['remaining_actions'] > 0:
+                candidate_found = True
+            set current player
+            set next player
+
+    set current player
+    set next player
+
+
+
+
+
+
+
+
+
+
+
+
+
+#####
+
+# f_id = full_action['fighter_id']
+# active_fighter = fighters.fighters[f_id]
+# move_def = active_fighter.standard_moves_def[full_action['action']]
+# start_point = battlefield.fighter_positions[f_id]
+# end_point = dutils.move_by_angle_and_distance(start_point, move_def[0], move_def[1] * active_fighter.stats['Move'])
+# dutils.get_restricted_move(start_point, end_point, terrains, active_fighter.stats['Move'])
+
+move_angles = [30, 90, 150, 210, 270, 330]
+move_ratios = [1, 2/3, 1/3]
+standard_moves_def = list(itertools.product(move_angles, move_ratios))
+# generate_move_points
+max_move = 10
+start_point = (11, 3)
+obstacles = terrains
+end_points_final, shortest_paths = dutils.get_restricted_std_moves(standard_moves_def, max_move, start_point, obstacles)
+dplotting.plot_terrains_and_lines(obstacles, shortest_paths)
+
+#####
+# version for more fighters
+
+reset round
+    set current player
+    set next player
+
+while not end_of_round:
+    state = get_state()
+
+    # get candidate action among all actions of all fighters
+    for fighter in fighters:
+        for action in fighter.actions:
+            action_scores = fighter.predict(action)
+
+    winning_action = action[argmax(candidate_actions_scores)]
+
+    perform winning action
+        perform action  <- step() / or already written perform_move_action()
+        log the action <- part of perform_move_action()
+        update remaining_actions
+
+    actions_by_players = remainning_actions.groupby('player_id')  # <- add to remaing_actions
+    if sum(actions_by_players['remaining_actions']) == 0:
+        end_of_round = True
+    else:
+        while not candidate_found:
+            next_candidate_player = next(self.players_cycle)
+            if actions_by_players[next_candidate_player]['remaining_actions'] > 0:
+                candidate_found = True
+            set current player
+            set next player
+
+    set current player
+    set next player

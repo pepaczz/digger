@@ -1,0 +1,15 @@
+# https://janakiev.com/blog/jupyter-virtual-envs/
+pip install --user virtualenv
+
+cd C:\programs
+
+python -m venv projx_venv
+
+projx_venv\Scripts\activate
+
+pip install --user ipykernel
+
+# https://github.com/microsoft/vscode-python/issues/14327
+
+python -m ipykernel install --user --name=laba_venv
+python -m ipykernel install --user --name projx_venv --display-name "Python (projx_venv)"
