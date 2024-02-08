@@ -1,9 +1,6 @@
-import matplotlib.pyplot as plt
-import pandas as pd
-import itertools
-from itertools import cycle
-import pickle
-
+"""
+Runs the games, trains the model and saves the weights
+"""
 import digger.utils as dutils
 import digger.plotting as dplotting
 import digger.constants as dconst
@@ -12,21 +9,17 @@ import digger.fighters as dfighters
 import digger.battlefield as dbattlefield
 from digger.terrain import terrains
 import digger.terrain as dterrain
-from datetime import datetime
 
-from importlib import reload
-reload(dplotting)
 
 is_train = True
 
 if __name__ == "__main__":
     # config
-    models_folder = "digger_models"
-    rewards_folder = "digger_rewards"
     n_battles = 3500
 
-    dutils.maybe_make_dir(models_folder)
-    dutils.maybe_make_dir(rewards_folder)
+    # make sure the folders exist
+    dutils.maybe_make_dir(dconst.MODELS_FOLDER)
+    dutils.maybe_make_dir(dconst.REWARDS_FOLDER)
 
     fighters = dfighters.Fighters()
     fighters.add_fighter('arkonaut_volley', 'Gorodrin', 0)
@@ -71,27 +64,15 @@ if __name__ == "__main__":
         # with open(f"{models_folder}/scaler.pkl", "wb") as f:
         #     pickle.dump(scaler, f)
 
-# # get battle log
-battle_log = battlefield.battle_log.get_log()
-start_idx = n_battles - 15
-end_idx = start_idx + 8
-for i in range(start_idx, end_idx):
-    print(i)
-    dplotting.plot_actions(fighters, battlefield, terrains, buffer=0, battle_number=i)
-
-#
-# dplotting.plot_actions(fighters, battlefield, terrains, buffer=0, battle_number=6950)
-# al = battlefield.action_log.get_log(4990)
-
-
-
-
-
-# 6950
-# 6970
-# 7010
-# 7110
-# 7790
-# 7870
+    # # AFTER RUN CHECKS
+    # # see battle log
+    # battle_log = battlefield.battle_log.get_log()
+    #
+    # # plot several paths
+    # start_idx = n_battles - 15
+    # end_idx = start_idx + 8
+    # for i in range(start_idx, end_idx):
+    #     print(i)
+    #     dplotting.plot_actions(fighters, battlefield, terrains, buffer=0, battle_number=i)
 
 

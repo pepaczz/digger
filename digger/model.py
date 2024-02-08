@@ -1,3 +1,6 @@
+"""
+Contains the model and replay buffer classes.
+"""
 import torch
 import torch.nn as nn
 import numpy as np
@@ -13,6 +16,7 @@ class ReplayBuffer:
         self.ptr, self.size, self.max_size = 0, 0, size
 
     def store(self, obs, act, rew, next_obs, done):
+        """Store a transition in the replay buffer"""
         self.obs1_buf[self.ptr] = obs
         self.obs2_buf[self.ptr] = next_obs
         self.acts_buf[self.ptr] = act
@@ -22,6 +26,7 @@ class ReplayBuffer:
         self.size = min(self.size + 1, self.max_size)
 
     def sample_batch(self, batch_size=32):
+        """Sample a batch of transitions for training"""
         idxs = np.random.randint(0, self.size, size=batch_size)
         return dict(
             s=self.obs1_buf[idxs],
@@ -59,6 +64,7 @@ class MLP(nn.Module):
 
 
 def predict(model, np_states):
+    """Predict the action values from a given state"""
     with torch.no_grad():
         inputs = torch.from_numpy(np_states.astype(np.float32))
         output = model(inputs)
@@ -67,6 +73,7 @@ def predict(model, np_states):
 
 
 def train_one_step(model, criterion, optimizer, inputs, targets):
+    """Perform single pass of training the model"""
     # convert to tensors
     inputs = torch.from_numpy(inputs.astype(np.float32))
     targets = torch.from_numpy(targets.astype(np.float32))

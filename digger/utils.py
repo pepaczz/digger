@@ -1,19 +1,27 @@
+"""
+Contains mostly movement related functions.
+Uses mainly shapely and pyvisgraph libraries.
+"""
+
 import os
 import numpy as np
 import json
-from shapely import Polygon, to_geojson
 import pyvisgraph as vg
 from shapely.geometry import LineString, Point
 from shapely.ops import split, snap
+from shapely import Polygon, to_geojson
+
 import digger.constants as dconst
 
 
 def point_to_shapely(point):
-    return(Point(point[0], point[1]))
+    """Converts (x, y) point to shapely point"""
+    return Point(point[0], point[1])
 
 
 def shapely_to_point(shapely_point):
-    return(shapely_point.x, shapely_point.y)
+    """Converts shapely point to (x, y) point"""
+    return shapely_point.x, shapely_point.y
 
 
 def move_by_angle_and_distance(point, angle, distance):

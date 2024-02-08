@@ -1,21 +1,28 @@
+"""
+Plotting functions for digger package.
+"""
 from shapely.plotting import plot_polygon, plot_line, plot_points
 import matplotlib.pyplot as plt
 import matplotlib
 
-def plot_terrains_and_lines(terrains, lines, point=None):
 
-    # plot shortest_paths and terrains
+def plot_terrains_and_lines(terrains=None, lines=None, point=None):
+    """Plots terrains and fighters' move paths. Optionally plots a point. e.g. target."""
     if point is not None:
         plt.scatter(point[0], point[1], marker="x", c="black")
-    for terrain in terrains:
-        plot_polygon(terrain)
-    for line in lines:
-        plot_line(line)
+
+    if terrains is not None:
+        for terrain in terrains:
+            plot_polygon(terrain)
+
+    if lines is not None:
+        for line in lines:
+            plot_line(line)
     plt.show()
 
 
 def plot_actions(fighters, battlefield, terrains, battle_number=None, buffer=0.98):
-
+    """Plot actions of fighters in given battle. Optionally buffer terrains."""
     log = battlefield.action_log.get_log(battle_number)
     battle_log = battlefield.battle_log.get_log(battle_number)
     cmap = matplotlib.colormaps["Spectral"]

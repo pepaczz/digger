@@ -1,43 +1,17 @@
-# get_val function
-# different objectives that might be optionally taken into account:
-# models injuries
-# models killed
-# model in proximity of target (for training purpose)
-# other
-import matplotlib.pyplot as plt
-import pandas as pd
-import itertools
+"""
+Battlefield class holds the game state and controls the game flow.
+It contains main methods for playing the game and updating the game state.
+"""
+
 import digger.utils as dutils
-import digger.plotting as dplotting
 import digger.constants as dconst
 import digger.structures as dstruct
-import digger.fighters as dfighters
 from itertools import cycle
-
 from shapely import distance
-from shapely.geometry import LineString
-from shapely.geometry.multilinestring import MultiLineString
-from shapely.ops import split, snap
-from digger.terrain import terrains
-from shapely.plotting import plot_polygon, plot_line, plot_points
 
 import digger.terrain as dterrain
 import numpy as np
 
-###############################
-
-# perform_action
-# currently only single action - move
-
-# possible actions
-# moves along the circle - full, 2/3, 1/3, 6 directions
-# move towards the closest model
-# need to evaluate possibility of each such move
-
-# position of all fighters need to be obtained at single moment due finding obstacles during movement
-
-# negative reward when moving out of the table
-# negative reward for each action
 
 class Battlefield:
     def __init__(self, fighters, players, terrains):
@@ -77,6 +51,7 @@ class Battlefield:
         self.target_pos = (None, None)
 
     def reset(self, fighters):
+        """Reset the battlefield before each battle"""
         self.battle_number += 1
         self.round = 0
 
@@ -103,23 +78,33 @@ class Battlefield:
             ].to_list()
             self.fighters_cycles[player] = cycle(fighters_player_now)
 
-
     def get_state(self):
+        """Get state of the game. When changing state size, change also STATE_SIZE in constants.py!
+        Hardcoded currently to single fighter
+        In future this should retrieve more complex states including:
+        - all fighters positions
+        - obstacles
+        - other fighters' stats
+        """
+        # get angle and distance to target
         angle, distance_to_tgt = dutils.get_angle_and_distance(self.fighter_positions[0],
                                                                self.target_pos)
 
         state = np.array([self.fighter_positions[0][0], self.fighter_positions[0][1],
                           angle, distance_to_tgt])
 
+        # other possible states - comment out!
         # state = np.array([self.fighter_positions[0][0], self.fighter_positions[0][1],
         #                   self.target_pos[0], self.target_pos[1],
         #                   angle, distance_to_tgt])
-
         # state = np.array([angle, distance_to_tgt])
+
         return state
 
     def play_battle(self, fighters, num_rounds, is_train=True, battle_number=0):
-        """Play the whole battle"""
+        """Play the whole battle
+        In simple setup this means 4 rounds and each fighter has two actions per round
+        """
         # print('#### Starting battle ####')
         self.battle_number = battle_number
         self.reset(fighters)
@@ -136,23 +121,20 @@ class Battlefield:
         n_rounds = self.round
         epsilon = np.round(single_fighter.epsilon, 3)
 
-        ## DEBUG
-        self.battle_number
-        al = self.action_log.get_log(self.battle_number)
-        all = self.action_log.get_log()
-        # sum reward
-        r1 = al['reward'].sum()
-        r2 = single_fighter.battle_reward
-        if abs(r1 - r2) > 0.2:
-            print(f'Rewards do not match: {r1} vs {r2}')
-            print(f"xxx")
-
-        if r1 > dconst.REW_REACHED_TARGET:
-            print('Rewards too high')
-            print(f"xxx")
-
-        # is the battle log already prefilled with some values?
-
+        # ## DEBUG PART - COMMENT OUT!
+        # self.battle_number
+        # al = self.action_log.get_log(self.battle_number)
+        # all = self.action_log.get_log()
+        # # sum reward
+        # r1 = al['reward'].sum()
+        # r2 = single_fighter.battle_reward
+        # if abs(r1 - r2) > 0.2:
+        #     print(f'Rewards do not match: {r1} vs {r2}')
+        #     print(f"xxx")
+        # if r1 > dconst.REW_REACHED_TARGET:
+        #     print('Rewards too high')
+        #     print(f"xxx")
+        # ## END DEBUG PART
 
         # append to battle log
         self.battle_log.append_to_battle_log(
@@ -160,11 +142,12 @@ class Battlefield:
             reward, self.target_pos
         )
 
-        if battle_number % 10 == 0:
+        if battle_number % dconst.PRINT_EVERY_NTH_BATTLE == 0:
             print(f'Battle: {battle_number} || Rew: {reward} || Eps: {epsilon} || Rnds: {n_rounds}')
 
     def play_round(self, fighters, is_train=True):
-        """Play single round of the game"""
+        """Play single round of the game, i.e. each fighter has two actions in basic setup.
+        """
         # initialize round and get current state
         self.round += 1
         self.current_player = dconst.PLAYER_START
@@ -202,7 +185,9 @@ class Battlefield:
         return None
 
     def set_next_current_player(self):
-        """Set next player for the round."""
+        """Search and set next player for the round.
+        Players are cycled in fixed order, but only those with remaining actions are considered.
+        """
         # get remaining actions by player
         players_remn_actions = self.remaining_actions.groupby("player_id").sum()["remaining_actions"]
 
@@ -221,7 +206,10 @@ class Battlefield:
         return None
 
     def step(self, action, active_fighter, lower_remain_actions=True):
-        """Perform single step in the game"""
+        """Perform single step in the game.
+        Hardcoded as move action, but in future it can be other types of actions (shooting, combat, ability...)
+        Lowering or zeroing remaining actions is a bit cumbersome now.
+        """
         active_fighter_id = active_fighter.fighter_id
         done = False
 
@@ -276,7 +264,10 @@ class Battlefield:
         return self.get_state(), reward, done, info
 
     def perform_move_action(self, action, active_fighter):
-        """Perform move action for a single fighter"""
+        """Perform move action for a single fighter.
+        Avoids obstacles and logs the action.
+        to implement: treat other fighters as obstacles as well
+        """
         # get fighter and move definition
         f_id = active_fighter.fighter_id
         move_def = active_fighter.standard_moves_def[action]
@@ -284,7 +275,7 @@ class Battlefield:
         end_point = dutils.move_by_angle_and_distance(
             start_point, move_def[0], move_def[1] * active_fighter.stats['Move'])
 
-        # expand terrain by fighter base
+        # get terrain and expand it by fighter base radius to avoid collision
         obstacles = dterrain.get_terrains_union(active_fighter.base / 2)
 
         # get restricted move
@@ -305,27 +296,36 @@ class Battlefield:
         return log_index
 
     def add_fighter(self):
+        """Register new fighter in the battlefield and return its id
+        Fighter position is stored in the battlefield object
+        """
         new_id = int(len(self.fighter_ids))
         self.fighter_ids.append(new_id)
         self.fighter_positions[new_id] = (None, None)
         return new_id
 
     def set_fighter_position(self, fighter_id, point):
+        """Set position of the fighter in the battlefield"""
         self.fighter_positions[fighter_id] = point
 
     def get_fighter_remaining_actions(self, fighter_id):
+        """Return remaining actions for given fighter"""
         return self.remaining_actions.loc[
             self.remaining_actions.fighter_id == fighter_id,
             'remaining_actions'
         ].values[0]
 
     def lower_fighter_remaining_actions(self, fighter_id):
+        """Lower remaining actions for given fighter by 1"""
         self.remaining_actions.loc[
             self.remaining_actions.fighter_id == fighter_id,
             'remaining_actions'
         ] -= 1
 
     def zero_fighter_remaining_actions(self, fighter_id):
+        """Set remaining actions for given fighter to 0
+        Currently used in situation when fighter reaches
+        """
         self.remaining_actions.loc[
             self.remaining_actions.fighter_id == fighter_id,
             'remaining_actions'

@@ -1,6 +1,8 @@
+"""
+This module contains classes for logging individual fighters' actions and battle logs.
+"""
 import pandas as pd
 import numpy as np
-
 
 class ActionLog:
     def __init__(self):

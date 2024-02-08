@@ -1,5 +1,8 @@
-from shapely import MultiPolygon, union_all
-from shapely import Polygon
+"""
+This module contains definitions of terrains and obstacles.
+"""
+
+from shapely import Polygon, union_all
 from shapely.plotting import plot_polygon, plot_line, plot_points
 from shapely.geometry.multipolygon import MultiPolygon
 

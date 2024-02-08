@@ -1,3 +1,9 @@
+"""
+Contains classes for fighters.
+Fighter class is used for each individual fighter.
+Fighters class is used to manage the collection of fighters.
+"""
+
 import itertools
 import numpy as np
 import pandas as pd
@@ -60,6 +66,7 @@ class Fighter:
         self.reset()
 
     def reset(self):
+        """Resets dynamic attributes for the fighter. Called at the start of each battle."""
         self.current_wounds = self.stats['Wnd']
         self.battle_reward = 0
         self.is_done = False
@@ -68,10 +75,12 @@ class Fighter:
         self.stats = get_fighter_stats(self.fighter_class)
 
     def update_replay_memory(self, state, action, reward, next_state, done):
+        """Update replay memory with new data"""
         self.memory.store(state, action, reward, next_state, done)
 
     def act(self, state):
-        # TODO: why there was originally np.argmax(act_values[0])?
+        """Choose action based on epsilon-greedy policy"""
+        # TODO: see why there was originally np.argmax(act_values[0])?
         if np.random.rand() <= self.epsilon:
             return np.random.choice(self.action_size)
         act_values = predict(self.model, state)
@@ -112,6 +121,7 @@ class Fighter:
         return states
 
     def replay(self, batch_size):
+        """Train the model using the replay buffer"""
         # first check if replay buffer contains enough data
         if self.memory.size < batch_size:
             return
@@ -138,12 +148,6 @@ class Fighter:
         # Then, only change the targets for the actions taken.
         # Q(s,a)
         target_full = predict(self.model, states)
-
-        # TODO: DELETE!!!
-        # target_full = np.round(target_full, 2)
-        # target_full[np.arange(batch_size), actions] = 0
-        # target_full[:20, :5]
-
         target_full[np.arange(batch_size), actions] = target
 
         # Run one training step
@@ -153,9 +157,11 @@ class Fighter:
             self.epsilon *= self.epsilon_decay
 
     def load(self, name):
+        """Load model weights from file"""
         self.model.load_weights(name)
 
     def save(self, name):
+        """Save model weights to file"""
         self.model.save_weights(name)
 
 
@@ -165,6 +171,7 @@ class Fighters:
         self.fighter_ids = []
 
     def add_fighter(self, fighter_class, name, player_id):
+        """Add a new fighter to the collection of fighters"""
         new_fighter = Fighter(fighter_class, name, player_id)
 
         # generate and assign fighter_id
@@ -178,6 +185,7 @@ class Fighters:
         return new_id
 
     def get_list(self):
+        """Return list containing all fighters objects"""
         return self.fighters.values()
 
     def get_living_fighters(self):
@@ -185,7 +193,7 @@ class Fighters:
         return [f.fighter_id for f in self.get_list() if f.current_wounds > 0]
 
     def get_not_done_fighters(self):
-        """Return list of fighters with current wounds > 0"""
+        """Return list of fighters with is_done = False"""
         return [f.fighter_id for f in self.get_list() if f.is_done is False]
 
     def get_fighters_df(self, fighter_ids=None):
@@ -206,7 +214,7 @@ class Fighters:
         return df
 
     def get_reset_remaining_actions(self):
-        """Return dataframe with remaining actions for each fighter"""
+        """Create dataframe for remaining actions for all fighters and reset to 2 actions for each fighter."""
         res = self.get_fighters_df(self.get_living_fighters())
         res['remaining_actions'] = 2
         return res.loc[:, ['fighter_id', 'player_id', 'remaining_actions']]
