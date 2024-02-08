@@ -165,12 +165,6 @@ def get_unrestricted_std_moves(standard_moves_def, start_point, max_move):
 
 def get_restricted_std_moves(standard_moves_def, max_move, start_point, obstacles):
     """Perform get_restricted_move for each end point in standard_moves_def
-
-    :param standard_moves_def:
-    :param max_move:
-    :param start_point:
-    :param obstacles:
-    :return:
     """
     # generate all endpoints from definitions
     end_points = get_unrestricted_std_moves(standard_moves_def, start_point, max_move)
@@ -233,27 +227,3 @@ def mm_to_inches(mm):
 def maybe_make_dir(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
-
-
-# from shapely.plotting import plot_polygon, plot_line, plot_points
-# ob1 = obstacles[1]
-# plot_polygon(ob1)
-# # plot_points(Point(start_point), color='red')
-# plot_points(Point(end_point), color="red")
-# LineString([Point(start_point), Point(start_point)])
-
-#
-# # test if start point is within the obstacle
-# start_point_2 = find_point_outside_obstacles(obstacles, start_point)
-# end_point_2 = find_point_outside_obstacles(obstacles, end_point)
-
-# # case end point within the obstacle
-# if (end_point_2 is None) or (start_point_2 is None):
-#     from shapely.plotting import plot_polygon, plot_line, plot_points
-#     import matplotlib.pyplot as plt
-#     for ob in obstacles:
-#         plot_polygon(ob)
-#     plot_points(Point(end_point), color="red")
-#     plot_points(Point(start_point), color="green")
-#     plt.show()
-#     print('xx')

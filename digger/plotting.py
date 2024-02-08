@@ -62,3 +62,17 @@ def plot_actions(fighters, battlefield, terrains, battle_number=None, buffer=0.9
         plt.scatter(target[0], target[1], marker="x", c="black")
 
     plt.show()
+
+
+def plot_rewards(battlefield):
+    """Plot rewards in each battle."""
+    # get data from battle log
+    battle_log = battlefield.battle_log.get_log()
+    battle_numbers = battle_log['battle_number'].ravel()
+    fighter_rewards = battle_log['fighter_reward'].ravel()
+
+    # plot
+    plt.scatter(battle_numbers, fighter_rewards, alpha=0.5, linewidths=0)
+    plt.xlabel('Battle number')
+    plt.ylabel('Fighter reward')
+    plt.show()

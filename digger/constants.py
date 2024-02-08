@@ -35,4 +35,4 @@ PRINT_EVERY_NTH_BATTLE = 10
 
 # paths
 MODELS_FOLDER = "data/digger_models"
-REWARDS_FOLDER = "data/digger_rewards"
+STATS_FOLDER = "data/stats"

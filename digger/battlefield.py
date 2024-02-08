@@ -80,11 +80,12 @@ class Battlefield:
 
     def get_state(self):
         """Get state of the game. When changing state size, change also STATE_SIZE in constants.py!
-        Hardcoded currently to single fighter
+        Hardcoded currently to single fighter - its position and angle and distance to target.
         In future this should retrieve more complex states including:
         - all fighters positions
         - obstacles
         - other fighters' stats
+        - the above possibly in form of some sort of vision as input for CNN
         """
         # get angle and distance to target
         angle, distance_to_tgt = dutils.get_angle_and_distance(self.fighter_positions[0],

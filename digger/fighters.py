@@ -3,7 +3,7 @@ Contains classes for fighters.
 Fighter class is used for each individual fighter.
 Fighters class is used to manage the collection of fighters.
 """
-
+import os
 import itertools
 import numpy as np
 import pandas as pd
@@ -16,12 +16,8 @@ import digger.constants as dconst
 from digger.model import MLP, ReplayBuffer, train_one_step, predict
 
 
-def load_stats(filename='data/stats_ko.xlsx'):
-    return pd.read_excel(filename)
-
-
-def get_fighter_stats(fighter_class='mizzenmaster'):
-    stats = load_stats()
+def get_fighter_stats(fighter_class='mizzenmaster', filename='stats_ko.xlsx'):
+    stats = pd.read_excel(os.path.join(dconst.STATS_FOLDER, filename))
     fighter_stats = stats.loc[stats.FighterClass == fighter_class, :].to_dict(orient='records')[0]
     return fighter_stats
 
@@ -214,7 +210,9 @@ class Fighters:
         return df
 
     def get_reset_remaining_actions(self):
-        """Create dataframe for remaining actions for all fighters and reset to 2 actions for each fighter."""
+        """Creates dataframe for remaining actions for all fighters
+        Resets to 2 actions for each fighter
+        """
         res = self.get_fighters_df(self.get_living_fighters())
         res['remaining_actions'] = 2
         return res.loc[:, ['fighter_id', 'player_id', 'remaining_actions']]
