@@ -200,14 +200,13 @@ def get_restricted_move(start_point, end_point, obstacles, max_move, get_path=Fa
 
     # get the shortest path if obstacle is hit
     if hits_obstacle:
-
         shortest_path = get_shortest_path(start_point, end_point, obstacles)
         shortest_path = limit_line(shortest_path, max_move)
-        shortest_path = trim_line_to_obstacle(shortest_path, obstacles)
-        result_path = shortest_path
+        result_path = trim_line_to_obstacle(shortest_path, obstacles)
     else:
         result_path = direct_path
 
+    # in case the result is single point, convert it to line
     if len(result_path.boundary.geoms) > 0:
         res_end_point = shapely_to_point(result_path.boundary.geoms[1])
     else:
@@ -227,3 +226,46 @@ def mm_to_inches(mm):
 def maybe_make_dir(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
+
+
+def get_target_random_position(margin=3, y_range_share=0.3):
+    """Get a random target position within the field with some margin"""
+    # generator object
+    rng = np.random.default_rng()
+
+    # get ranges of x and y
+    min_x = margin
+    max_x = dconst.FIELD_X_RANGE - margin
+    min_y = (1 - y_range_share) * dconst.FIELD_Y_RANGE
+    max_y = dconst.FIELD_Y_RANGE - margin
+
+    return rng.uniform(min_x, max_x), rng.uniform(min_y, max_y)
+
+
+def get_moving_target_start_end(margin=3, y_range_share=0.3):
+    """Get a random start and end position for moving target objective"""
+    # create shapely line from list of points
+    min_x = margin
+    max_x = dconst.FIELD_X_RANGE - margin
+    min_y = (1 - y_range_share) * dconst.FIELD_Y_RANGE
+    max_y = dconst.FIELD_Y_RANGE - margin
+    points = [(min_x, min_y), (max_x, min_y), (max_x, max_y), (min_x, max_y), (min_x, min_y)]
+    line = LineString([point_to_shapely(point) for point in points])
+
+    # get starting point
+    rng = np.random.default_rng()
+    start_ratio = rng.random()
+
+    # get end from opposite side of rectangle
+    if start_ratio > 0.5:
+        end_ratio = rng.uniform(0, 0.5)
+    else:
+        end_ratio = rng.uniform(0.5, 1)
+
+    # get start and end points
+    start = line.interpolate(start_ratio, normalized=True)
+    end = line.interpolate(end_ratio, normalized=True)
+
+    return shapely_to_point(start), shapely_to_point(end)
+
+

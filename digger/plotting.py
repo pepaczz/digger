@@ -64,7 +64,7 @@ def plot_actions(fighters, battlefield, terrains, battle_number=None, buffer=0.9
     plt.show()
 
 
-def plot_rewards(battlefield):
+def plot_rewards(battlefield, window=250):
     """Plot rewards in each battle."""
     # get data from battle log
     battle_log = battlefield.battle_log.get_log()
@@ -72,7 +72,9 @@ def plot_rewards(battlefield):
     fighter_rewards = battle_log['fighter_reward'].ravel()
 
     # plot
-    plt.scatter(battle_numbers, fighter_rewards, alpha=0.5, linewidths=0)
+    plt.scatter(battle_numbers, fighter_rewards, alpha=0.15, linewidths=0)
+    battle_log["fighter_reward"].rolling(window=window).mean().plot(c="red", label=f'Rolling mean ({window})')
     plt.xlabel('Battle number')
     plt.ylabel('Fighter reward')
+    plt.legend()
     plt.show()

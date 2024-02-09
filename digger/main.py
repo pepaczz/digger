@@ -3,7 +3,6 @@ Runs the games, trains the model and saves the weights
 
 within n_battles=5000 the model trains fairly well to simple move-to-target task
 using N_HIDDEN_LAYERS = 2, HIDDEN_DIM = 16, BATCH_SIZE = 32, BUFFER_SIZE = 512
-
 """
 import digger.utils as dutils
 import digger.plotting as dplotting
@@ -17,7 +16,7 @@ import digger.terrain as dterrain
 
 if __name__ == "__main__":
     # config
-    n_battles = 5000
+    n_battles = 7000
     is_train = True
 
     # make sure the folders exist
@@ -63,14 +62,14 @@ if __name__ == "__main__":
     # plot rewards
     dplotting.plot_rewards(battlefield)
 
-    # # AFTER RUN CHECKS
-    # # see battle log
-    # battle_log = battlefield.battle_log.get_log()
-    #
-    # # plot several paths
-    # start_idx = n_battles - 15
-    # end_idx = start_idx + 8
-    # for i in range(start_idx, end_idx):
-    #     print(i)
-    #     dplotting.plot_actions(fighters, battlefield, terrains, buffer=0, battle_number=i)
+    # AFTER RUN CHECKS
+    # see battle log
+    battle_log = battlefield.battle_log.get_log()
+
+    # plot several paths
+    start_idx = n_battles - 6
+    end_idx = n_battles
+    for i in range(start_idx, end_idx):
+        print(i)
+        dplotting.plot_actions(fighters, battlefield, terrains, buffer=0, battle_number=i)
 

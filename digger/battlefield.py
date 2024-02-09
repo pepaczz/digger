@@ -56,9 +56,7 @@ class Battlefield:
         self.round = 0
 
         # set target position
-        target_x = dconst.TARGET_X
-        target_y = dconst.TARGET_Y
-        self.target_pos = (target_x, target_y)
+        self.target_pos = dutils.get_target_random_position(y_range_share=0.3)
 
         # reset fighters positions and rewards
         for idx, fighter in enumerate(fighters.get_list()):

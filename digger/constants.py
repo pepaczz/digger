@@ -3,12 +3,9 @@ FIELD_X_RANGE = 30
 FIELD_Y_RANGE = 30
 
 # move-to-target: target position
-TARGET_X = 20
-TARGET_Y = 20
-# TARGET_X_RANGE = 15
-# TARGET_Y_RANGE = 12.5
-# TARGET_X_LOWER_BOUND = 2.5
-# TARGET_Y_LOWER_BOUND = 15
+# constant target position
+# TARGET_X = 20
+# TARGET_Y = 20
 
 # battle control
 PLAYER_START = 0
@@ -27,12 +24,13 @@ HIDDEN_DIM = 16
 
 # rewards
 REW_DIST_MULT = -0.1
-REW_FIELD_EDGE = -3
+REW_FIELD_EDGE = -10
 REW_REACHED_TARGET = 20
 
 # control
-PRINT_EVERY_NTH_BATTLE = 10
+PRINT_EVERY_NTH_BATTLE = 20
 
 # paths
 MODELS_FOLDER = "data/digger_models"
 STATS_FOLDER = "data/stats"
+
