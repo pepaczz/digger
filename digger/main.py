@@ -1,7 +1,7 @@
 """
 Runs the games, trains the model and saves the weights
 
-within n_battles=5000 the model trains fairly well to simple move-to-target task
+within n_battles=7000 the model trains fairly well to simple move-to-target task
 using N_HIDDEN_LAYERS = 2, HIDDEN_DIM = 16, BATCH_SIZE = 32, BUFFER_SIZE = 512
 """
 import digger.utils as dutils
@@ -34,6 +34,7 @@ if __name__ == "__main__":
     # hardcode single_fighter for now
     single_fighter = fighters.fighters[0]
 
+    # either load existing model or pre-populate buffer with random moves
     if is_train:
         # collect random moves to fit the scaler and prefill the buffer
         single_fighter.collect_random_moves(battlefield, fighters)
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     battlefield.action_log.clean_log()
     battlefield.battle_log.clean_log()
 
-    # play the game n_battles times
+    # main cycle - play the game n_battles times
     for e in range(n_battles):
         battlefield.play_battle(fighters, num_rounds=dconst.ROUNDS_PER_BATTLE, battle_number=e)
 
@@ -67,7 +68,7 @@ if __name__ == "__main__":
     battle_log = battlefield.battle_log.get_log()
 
     # plot several paths
-    start_idx = n_battles - 6
+    start_idx = n_battles - 4
     end_idx = n_battles
     for i in range(start_idx, end_idx):
         print(i)
