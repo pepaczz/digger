@@ -36,9 +36,14 @@ class Fighter:
         self.move_ratios = [1, 1/2]  # [1, 2/3, 1/3]
         self.standard_moves_def = list(itertools.product(self.move_angles, self.move_ratios))
 
-        # action space
-        self.action_space = np.arange(len(self.standard_moves_def))
+        # attack actions
+        self.attack_action_space_size = 1
+
+        # action space and size
+        self.action_space = self.attack_action_space_size + np.arange(len(self.standard_moves_def))
         self.action_size = len(self.action_space)
+        self.indices_attack = np.arange(self.attack_action_space_size)
+        self.indices_move = np.arange(self.attack_action_space_size, self.action_size)
 
         # model and memory
         self.memory = ReplayBuffer(dconst.STATE_SIZE, self.action_size, size=dconst.BUFFER_SIZE)
@@ -81,6 +86,16 @@ class Fighter:
             return np.random.choice(self.action_size)
         act_values = predict(self.model, state)
         return np.argmax(act_values)  # returns action
+
+    def get_action_definition(self, action):
+        """Get the definition of the action based on the action index"""
+        if action in self.indices_attack:
+            return 'attack', None
+        elif action in self.indices_move:
+            move_index = action - self.attack_action_space_size
+            return 'move', self.standard_moves_def[move_index]
+        else:
+            return 'unknown', None
 
     def collect_random_moves(self, battlefield, fighters, update_memory=True, fit_scaler=True):
         """Collect random moves to populate the replay buffer and fit the scaler

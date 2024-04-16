@@ -70,7 +70,7 @@ See https://www.warhammer-community.com/warcry-downloads/ for the official Warcr
     - Increases the complexity of the decision-making.
     - Some special abilities can e.g. target different fighters or different points in the battlefield space.
   - Effective order of fighters' activation 
-    - doing some action and/or ability with fighter A and then with B might be preferable to activating fighters in reverse order)
+    - doing some action and/or ability with fighter A and then with fighter B might be preferable to activating fighters in reverse order.
 	- Should this be included also in some player-level agent?
     - Can we compare Q values between fighters to assess the order of activation?
   - Other DQN than basic deep ANN (e.g. CNN evaluating other fighters' and terrain position)

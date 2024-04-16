@@ -212,8 +212,18 @@ class Battlefield:
         active_fighter_id = active_fighter.fighter_id
         done = False
 
-        # perform move action
-        log_index = self.perform_move_action(action, active_fighter)
+        # get action type
+        action_type, _ = active_fighter.get_action_definition(action)
+
+        # perform action depending on type
+        if action_type == 'move':
+            log_index = self.perform_move_action(action, active_fighter)
+        elif action_type == 'attack':
+            print('Attack action not implemented yet')
+            log_index = None
+        else:
+            print('Unknown action')
+            log_index = None
 
         # decrease remaining actions (not done during initial random moves collection)
         if lower_remain_actions:
@@ -269,7 +279,7 @@ class Battlefield:
         """
         # get fighter and move definition
         f_id = active_fighter.fighter_id
-        move_def = active_fighter.standard_moves_def[action]
+        _, move_def = active_fighter.get_action_definition(action)
         start_point = self.fighter_positions[f_id]
         end_point = dutils.move_by_angle_and_distance(
             start_point, move_def[0], move_def[1] * active_fighter.stats['Move'])
