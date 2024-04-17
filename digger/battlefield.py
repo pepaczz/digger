@@ -219,8 +219,7 @@ class Battlefield:
         if action_type == 'move':
             log_index = self.perform_move_action(action, active_fighter)
         elif action_type == 'attack':
-            print('Attack action not implemented yet')
-            log_index = None
+            log_index = self.perform_attack_action(action, active_fighter)
         else:
             print('Unknown action')
             log_index = None
@@ -298,9 +297,26 @@ class Battlefield:
             self.current_player, self.battle_number, self.round, f_id, action_order, 'move', action,
             move_def, start_point, self.fighter_positions[f_id])
 
-        # save the restricted move path
+        # get log_index for future use and save the restricted move path
         log_index = self.action_log.action_log.index[-1]
         self.move_paths[log_index] = path_restricted
+
+        return log_index
+
+    def perform_attack_action(self, action, active_fighter):
+        # get fighter and move definition
+        f_id = active_fighter.fighter_id
+        _, attack_def = active_fighter.get_action_definition(action)
+
+        # log the action
+        action_order = self.action_log.get_fighter_round_actions(self.round, f_id, self.battle_number).shape[0]
+        self.action_log.append_to_action_log(
+            self.current_player, self.battle_number, self.round, f_id, action_order, 'attack', action,
+            None, None, self.fighter_positions[f_id])
+
+        # get log_index for future use and save the restricted move path
+        log_index = self.action_log.action_log.index[-1]
+        self.move_paths[log_index] = None  # possibly redundant?
 
         return log_index
 

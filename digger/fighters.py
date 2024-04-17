@@ -40,10 +40,10 @@ class Fighter:
         self.attack_action_space_size = 1
 
         # action space and size
-        self.action_space = self.attack_action_space_size + np.arange(len(self.standard_moves_def))
+        self.indices_attack = list(np.arange(self.attack_action_space_size))
+        self.indices_move = list(self.attack_action_space_size + np.arange(len(self.standard_moves_def)))
+        self.action_space = self.indices_attack + self.indices_move
         self.action_size = len(self.action_space)
-        self.indices_attack = np.arange(self.attack_action_space_size)
-        self.indices_move = np.arange(self.attack_action_space_size, self.action_size)
 
         # model and memory
         self.memory = ReplayBuffer(dconst.STATE_SIZE, self.action_size, size=dconst.BUFFER_SIZE)

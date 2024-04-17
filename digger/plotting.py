@@ -21,11 +21,12 @@ def plot_terrains_and_lines(terrains=None, lines=None, point=None):
     plt.show()
 
 
-def plot_actions(fighters, battlefield, terrains, battle_number=None, buffer=0.98):
+def plot_actions(fighters, battlefield, terrains, battle_number=None, buffer=0.98, save_fld=None):
     """Plot actions of fighters in given battle. Optionally buffer terrains."""
     log = battlefield.action_log.get_log(battle_number)
     battle_log = battlefield.battle_log.get_log(battle_number)
     cmap = matplotlib.colormaps["Spectral"]
+    plt.ioff()
     fig, ax = plt.subplots()
 
     for terrain in terrains:
@@ -39,6 +40,7 @@ def plot_actions(fighters, battlefield, terrains, battle_number=None, buffer=0.9
             log
             .loc[log['fighter_id'] == f_id, :]
             .sort_values(by=['round', 'action_order'])[['position_start', 'position_end']]
+            .dropna()
             .reset_index(drop=False, names='orig_index')
         )
         if positions.shape[0] == 0:
@@ -61,10 +63,13 @@ def plot_actions(fighters, battlefield, terrains, battle_number=None, buffer=0.9
         target = battle_log.loc[battle_log['battle_number'] == battle_number, 'target_position'].iloc[0]
         plt.scatter(target[0], target[1], marker="x", c="black")
 
-    plt.show()
+    if save_fld is not None:
+        plt.savefig(f"{save_fld}/battle_{battle_number}.png", dpi=300)
+    else:
+        plt.show()
 
 
-def plot_rewards(battlefield, window=250):
+def plot_rewards(battlefield, window=250, save_fld=None):
     """Plot rewards in each battle."""
     # get data from battle log
     battle_log = battlefield.battle_log.get_log()
@@ -77,4 +82,10 @@ def plot_rewards(battlefield, window=250):
     plt.xlabel('Battle number')
     plt.ylabel('Fighter reward')
     plt.legend()
-    plt.show()
+
+    if save_fld is not None:
+        plt.savefig(f"{save_fld}/rewards.png", dpi=300)
+    else:
+        plt.show()
+
+

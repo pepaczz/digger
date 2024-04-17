@@ -37,8 +37,8 @@ class ActionLog:
             action_type,
             action,
             action_details,
-            tuple(np.round(position_start, 3)),
-            tuple(np.round(position_end, 3)),
+            tuple(np.round(position_start, 3)) if position_start is not None else None,
+            tuple(np.round(position_end, 3)) if position_end is not None else None,
             state,
             reward
         ]

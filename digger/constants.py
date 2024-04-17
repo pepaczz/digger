@@ -33,4 +33,4 @@ PRINT_EVERY_NTH_BATTLE = 20
 # paths
 MODELS_FOLDER = "data/digger_models"
 STATS_FOLDER = "data/stats"
-
+FLD_IMG_RESULTS = 'img/results'

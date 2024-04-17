@@ -60,17 +60,25 @@ if __name__ == "__main__":
         # save the DQN
         single_fighter.save(f"{dconst.MODELS_FOLDER}/dqn.ckpt")
 
-    # plot rewards
-    dplotting.plot_rewards(battlefield)
-
     # AFTER RUN CHECKS
     # see battle log
     battle_log = battlefield.battle_log.get_log()
 
-    # plot several paths
-    start_idx = n_battles - 4
-    end_idx = n_battles
-    for i in range(start_idx, end_idx):
-        print(i)
-        dplotting.plot_actions(fighters, battlefield, terrains, buffer=0, battle_number=i)
+    # plotting
+    n_plots = 5
+    fld_img = dutils.create_timestamp_folder(dconst.FLD_IMG_RESULTS)
+
+    # plot rewards
+    dplotting.plot_rewards(battlefield, save_fld=fld_img)
+
+    # plot several successful paths
+    idx_battles_success = battle_log.loc[battle_log["fighter_reward"] > 0, "battle_number"][:n_plots].tolist()
+    for i in idx_battles_success:
+        dplotting.plot_actions(fighters, battlefield, terrains, buffer=0, battle_number=i, save_fld=fld_img)
+
+    # plot several other paths
+    idx_battles_all = list(range(n_battles - n_plots + 1, n_battles + 1))
+    for i in idx_battles_all:
+        dplotting.plot_actions(fighters, battlefield, terrains, buffer=0, battle_number=i, save_fld=fld_img)
+    print("Plotting done")
 

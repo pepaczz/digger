@@ -5,6 +5,7 @@ Uses mainly shapely and pyvisgraph libraries.
 
 import os
 import numpy as np
+import pandas as pd
 import json
 import pyvisgraph as vg
 from shapely.geometry import LineString, Point
@@ -226,6 +227,14 @@ def mm_to_inches(mm):
 def maybe_make_dir(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
+
+
+def create_timestamp_folder(base_folder):
+    """Create a folder with current timestamp as name in the base folder"""
+    current_datetime = pd.Timestamp.now().strftime('%y%m%d_%H%M%S')
+    folder_name = os.path.join(base_folder, current_datetime)
+    maybe_make_dir(folder_name)
+    return folder_name
 
 
 def get_target_random_position(margin=3, y_range_share=0.3):

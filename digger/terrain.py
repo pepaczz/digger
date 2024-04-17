@@ -31,8 +31,22 @@ polygon_3 = Polygon([
     (8, 4)
 ])
 
+polygon_4 = Polygon([
+    (8, 5),
+    (16, 8),
+    (16, 9),
+    (10, 8)
+])
+
+polygon_5 = Polygon([
+    (15, 12),
+    (20, 12),
+    (20, 13),
+    (15, 13)
+])
+
 # terrains = [polygon_1, polygon_2, polygon_3]
-terrains = [polygon_3]
+terrains = [polygon_4, polygon_5]
 
 
 def get_terrains_union(buffer=0):
